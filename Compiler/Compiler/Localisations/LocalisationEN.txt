@@ -1,0 +1,70 @@
+﻿Файл
+File
+Правка
+Edit
+Текст
+Text
+Пуск
+Play
+Справка
+Info
+Локализация 
+Localisation
+Вид
+View
+Создать
+Create
+Открыть
+Open
+Сохранить
+Save
+Сохранить как
+Save Ass
+Выход
+Exit
+Отменить
+Cancel
+Повторить
+Repeat
+Вырезать
+Cut
+Копировать
+Copy
+Вставить
+Paste
+Удалить
+Delete
+Выделить все
+Select all
+Постановка задачи
+Task
+Грамматика
+Grammar
+Классификация грамматики
+Grammar's classification
+Метод анализа
+Analysis method
+Диагностика и нейтрализация ошибок
+Diagnosis and neutralization of errors
+Тестовый пример
+Test example
+Список литературы
+References
+Исходный код программы
+Source code
+Вызов справки
+Info
+О программе
+About
+Размер текста
+Font size
+Окно кода
+Code window
+Окно вывода
+Output window
+Увеличить шрифт
+Font size up
+Уменьшить шрифт
+Font size down
+Новый документ
+New document

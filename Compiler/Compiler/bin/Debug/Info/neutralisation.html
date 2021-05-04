@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Диагностика и нейтрализация ошибок</TITLE>
+	<META NAME="GENERATOR" CONTENT="LibreOffice 4.1.6.2 (Linux)">
+	<META NAME="AUTHOR" CONTENT="Антонянц Егор">
+	<META NAME="CREATED" CONTENT="20210412;153800000000000">
+	<META NAME="CHANGEDBY" CONTENT="Антонянц Егор">
+	<META NAME="CHANGED" CONTENT="20210414;45700000000000">
+	<META NAME="AppVersion" CONTENT="12.0000">
+	<META NAME="Company" CONTENT="SPecialiST RePack">
+	<META NAME="DocSecurity" CONTENT="0">
+	<META NAME="HyperlinksChanged" CONTENT="false">
+	<META NAME="LinksUpToDate" CONTENT="false">
+	<META NAME="ScaleCrop" CONTENT="false">
+	<META NAME="ShareDoc" CONTENT="false">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { margin-left: 1.18in; margin-right: 0.59in; margin-top: 0.79in; margin-bottom: 0.79in }
+		P { text-indent: 0.49in; margin-bottom: 0.08in; direction: ltr; text-align: justify; widows: 2; orphans: 2 }
+		P.western { font-family: "Times New Roman", serif; font-size: 14pt }
+		P.cjk { font-size: 14pt; so-language: ru-RU }
+		P.ctl { font-family:  }
+		H1 { text-indent: 0.49in; margin-top: 0.33in; margin-bottom: 0in; direction: ltr; text-align: justify; page-break-inside: avoid; widows: 2; orphans: 2 }
+		H1.western { font-family: "Times New Roman", serif; font-size: 16pt }
+		H1.cjk { font-size: 16pt; so-language: ru-RU }
+		H1.ctl { font-family: ; font-size: 14pt }
+		H2 { text-indent: 0.49in; margin-top: 0.14in; margin-bottom: 0in; direction: ltr; text-align: justify; page-break-inside: avoid; widows: 2; orphans: 2 }
+		H2.western { font-size: 14pt }
+		H2.cjk { font-family: "Arial"; font-size: 14pt; so-language: ru-RU }
+		H2.ctl { font-family: ; font-size: 13pt }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="ru-RU" DIR="LTR">
+<H1 CLASS="western" STYLE="text-indent: 0in; margin-top: 0in; line-height: 150%">
+Диагностика и нейтрализация синтаксических ошибок</H1>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Согласно заданию на курсовую работу,
+необходимо реализовать нейтрализацию
+синтаксических ошибок, используя метод
+Айронса.</P>
+<H2 CLASS="western" STYLE="text-indent: 0in; margin-top: 0in; line-height: 150%">
+Метод Айронса</H2>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Суть метода Айронса заключается в
+следующем:</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+При обнаружении ошибки (во входной
+цепочке в процессе разбора встречается
+символ, который не соответствует ни
+одному из ожидаемых символов), входная
+цепочка символов выглядит следующим
+образом: <SPAN LANG="en-US"><B>Tt</B></SPAN>, где <SPAN LANG="en-US">T</SPAN>
+– следующий символ во входном потоке
+(ошибочный символ), <SPAN LANG="en-US">t</SPAN> –
+оставшаяся во входном потоке цепочка
+символов после <SPAN LANG="en-US">T</SPAN>. Алгоритм
+нейтрализации состоит из следующих
+шагов:</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+1. Определяются недостроенные кусты
+дерева разбора;</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+2. Формируется множество <SPAN LANG="en-US">L</SPAN>
+– множество остаточных символов
+недостроенных кустов дерева разбора;</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+3. Из входной цепочки удаляется символ
+следующий символ до тех пор, пока цепочка
+не примет вид <SPAN LANG="en-US"><B>Tt</B></SPAN>, такой,
+что 
+</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+U => T, где U &#8712; L </P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+то есть до тех пор, пока следующий в
+цепочке символ <SPAN LANG="en-US">T</SPAN> не сможет
+быть выведен из какого-нибудь из
+остаточных символов недостроенных
+кустов.</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+4. Определяется, какой из недостроенных
+кустов стал причиной появления символа
+<SPAN LANG="en-US">U</SPAN> в множестве <SPAN LANG="en-US">L</SPAN>
+(иначе говоря, частью какого из
+недостроенных кустов является символ
+<SPAN LANG="en-US">U</SPAN>).</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Таким образом, определяется, к какому
+кусту в дереве разбора можно «привязать»
+оставшуюся входную цепочку символов
+после удаления из текста ошибочного
+фрагмента.</P>
+<P CLASS="western" ALIGN=LEFT STYLE="text-indent: 0in; margin-bottom: 0.14in">
+</P>
+<H2 CLASS="western" STYLE="text-indent: 0in; margin-top: 0in; line-height: 150%; page-break-before: always">
+Метод Айронса для автоматной грамматики</H2>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Разрабатываемый синтаксический
+анализатор построен на базе автоматной
+грамматики. Реализация алгоритма Айронса
+для автоматной грамматики имеет следующую
+особенность.</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Дерево разбора с использованием
+автоматной грамматики представлено на
+рисунке 1</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+</P>
+<P CLASS="western" ALIGN=CENTER STYLE="text-align: center; text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+<IMG SRC="images\neutralisation1.png" NAME="Рисунок 1" ALIGN=BOTTOM WIDTH=296 HEIGHT=173 BORDER=0></P>
+<P CLASS="western" ALIGN=CENTER STYLE="text-align: center; text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Рисунок 1 – Структура дерева разбора
+для автоматной грамматики</P>
+<P CLASS="western" ALIGN=CENTER STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Таким образом, при возникновении
+синтаксической ошибки в процессе разбора
+с использованием автоматной грамматики,
+в дереве разбора всегда будет <B>только
+один недостроенный куст</B> (см. рисунок
+2).</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+</P>
+<P CLASS="western" ALIGN=CENTER STYLE="text-align: center; text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+<IMG SRC="images\neutralisation2.png" NAME="Рисунок 2" ALIGN=BOTTOM WIDTH=356 HEIGHT=208 BORDER=0></P>
+<P CLASS="western" ALIGN=CENTER STYLE="text-align: center; text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Рисунок 2 – Недостроенный куст при
+возникновении синтаксической ошибки
+(выделен пунктиром)</P>
+<P CLASS="western" ALIGN=CENTER STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Поскольку единственный недостроенный
+куст – это тот, во время построения
+которого возникла синтаксическая
+ошибка, то это единственный куст, к
+которому можно привязать оставшуюся
+входную цепочку символов.</P>
+<P CLASS="western" STYLE="text-indent: 0in; margin-bottom: 0in; line-height: 150%">
+Предлагается свести алгоритм нейтрализации
+к последовательному удалению следующего
+символа во входной цепочке до тех пор,
+пока следующий символ не окажется одним
+из допустимых в данный момент разбора.</P>
+<BR><footer><small>Курсовая работа выполнена <b>Антонянц Е.</b>, студентом группы АВТ-812</small></footer>
+</BODY>
+</HTML>

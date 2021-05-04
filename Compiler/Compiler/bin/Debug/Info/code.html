@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Листинг программы</title>
+</head>
+<body>
+<h1>Листинг программы</h1><br>
+<h3>Parser.cs</h3><br>
+<listing>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Compiler
+{
+    class ParseError: Exception
+    {
+        private int _idx;
+        public int Idx
+        {
+            get
+            {
+                return _idx;
+            }
+        }
+
+        public ParseError(String msg, int index): base(msg)
+        {
+            _idx = index;
+        }
+
+    }
+
+    class Parser
+    {
+        private string id;
+        private int state;
+        private CharChain chain;
+
+        private List<ParseError> errors;
+
+        public List<ParseError> GetErrors()
+        {
+            return errors;
+        }
+
+        public bool Parse (CharChain c)
+        {
+            chain = c;
+            state = 1;
+            id = "";
+
+            errors = new List<ParseError>();
+
+            chain.SkipSpaces();
+
+            while (state != 13)
+            {
+                switch (state)
+                {
+                    case 1:
+                        state1();
+                        break;
+
+                    case 2:
+                        state2();
+                        break;
+
+                    case 3:
+                        state3();
+                        break;
+
+                    case 4:
+                        state4();
+                        break;
+
+                    case 5:
+                        state5();
+                        break;
+
+                    case 6:
+                        state6();
+                        break;
+
+                    case 7:
+                        state7();
+                        break;
+
+                    case 8:
+                        state8();
+                        break;
+
+                    case 9:
+                        state9();
+                        break;
+
+                    case 10:
+                        state10();
+                        break;
+
+                    case 11:
+                        state11();
+                        break;
+
+                    case 12:
+                        state12();
+                        break;
+
+
+                }
+            }
+
+            return true;
+        }
+
+
+
+        private void handleError(string eMess, Character  c)
+        {
+            errors.Add(new ParseError(eMess, c.Idx));
+        }
+
+        private bool tryStop()
+        {
+            char next = chain.Next().Char;
+            
+            if (next == '\0' || next == ';')
+            {
+                chain.GetNext();
+                state = 13;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void state1()
+        {
+            Character c = chain.GetNext();
+
+            if(isLetter(c.Char))
+            {
+                state = 2;
+
+                id += c.Char;
+            }
+            else
+            {
+                handleError("Ожидалось ключевое слово const.", c);
+
+                while(!isLetter(chain.Next().Char))
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state2()
+        {
+            Character c = chain.GetNext();
+            if(isLetter(c.Char))
+            {
+                state = 2;
+
+                id += c.Char;
+            } 
+            else if (c.Char == ' ') {
+                state = 3;
+
+                if(!id.Equals("const"))
+                {
+                    handleError("Ожидалось ключевое слово const.", c);
+                }
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while (!isLetter(chain.Next().Char) && chain.Next().Char != ' ')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state3()
+        {
+            Character c = chain.GetNext();
+            if(isLetter(c.Char))
+            {
+                state = 4;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while (!isLetter(chain.Next().Char))
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state4()
+        {
+            Character c = chain.GetNext();
+            if(c.Char == '=')
+            {
+                state = 5;
+            }
+            else if (isLetter(c.Char))
+            {
+                state = 4;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+                
+                while (!isLetter(chain.Next().Char) && chain.Next().Char != '=')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state5()
+        {
+            Character c = chain.Next();
+            if(c.Char == '+' || c.Char == '-')
+            {
+                state = 6;
+                chain.GetNext();
+            }
+            else
+            {
+                state = 6;
+            }
+        }
+
+        private void state6()
+        {
+            Character c = chain.GetNext();
+            if(c.Char >= '0' && c.Char <= '9')
+            {
+                state = 7;
+            }
+            else if (c.Char == '.')
+            {
+                state = 8;
+            }
+            else if (c.Char == 'E')
+            {
+                state = 10;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while(!isDigit(chain.Next().Char) && chain.Next().Char != 'E' && chain.Next().Char != '.')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state7()
+        {
+            Character c = chain.GetNext();
+            if(c.Char >= '0' && c.Char <= '9')
+            {
+                state = 7;
+            }
+            else if(c.Char == '.')
+            {
+                state = 8;
+            }
+            else if(c.Char == ';')
+            {
+                state = 13;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while (!isDigit(chain.Next().Char) && chain.Next().Char != '.' && chain.Next().Char != ';')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state8()
+        {
+            Character c = chain.GetNext();
+            if (c.Char >= '0' && c.Char <= '9')
+            {
+                state = 9;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while (!isDigit(chain.Next().Char))
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state9()
+        {
+            Character c = chain.GetNext();
+            if (c.Char >= '0' && c.Char <= '9')
+            {
+                state = 9;
+            }
+            else if (c.Char == 'E')
+            {
+                state = 10;
+            }
+            else if (c.Char == ';')
+            {
+                state = 13;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while(!isDigit(chain.Next().Char) && chain.Next().Char != 'E' && chain.Next().Char != ';')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state10()
+        {
+            Character c = chain.GetNext();
+            if (c.Char >= '0' && c.Char <= '9')
+            {
+                state = 12;
+            }
+            else if (c.Char == '-' || c.Char == '+')
+            {
+                state = 11;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while (!isDigit(chain.Next().Char) && chain.Next().Char != '-' && chain.Next().Char != '+')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state11()
+        {
+            Character c = chain.GetNext();
+            if (c.Char >= '0' && c.Char <= '9')
+            {
+                state = 12;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while(!isDigit(chain.Next().Char))
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private void state12()
+        {
+            Character c = chain.GetNext();
+            if (c.Char >= '0' && c.Char <= '9')
+            {
+                state = 12;
+            }
+            else if (c.Char == ';')
+            {
+                state = 13;
+            }
+            else
+            {
+                handleError("Неожиданный символ: '" + c.Str + "'.", c);
+
+                while (!isDigit(chain.Next().Char) && chain.Next().Char != ';')
+                {
+                    if (tryStop()) break;
+
+                    chain.GetNext();
+                }
+            }
+        }
+
+        private bool isLetter(char c)
+        {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+        }
+
+        private bool isDigit (char c)
+        {
+            return (c >= '0' && c <= '9');
+        }
+    }
+}
+
+</listing><hr>
+<h3>CharChain.cs</h3><br>
+<listing>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Compiler
+{
+    class Character
+    {
+        private char _c;
+        public char Char
+        {
+            get
+            {
+                return _c;
+            }
+        }
+
+        public String Str
+        {
+            get
+            {
+                if (_c == '\0')
+                {
+                    return "<конец файла>";
+                }
+                else if (_c == '\n')
+                {
+                    return "<новая строка>";
+                }
+                else
+                {
+                    return "" + _c;
+                }
+            }
+        }
+
+
+        private int _idx;
+
+        public int Idx
+        {
+            get
+            {
+                return _idx;
+            }
+        }
+
+        public Character(char c, int idx)
+        {
+            _c = c;
+            _idx = idx;
+        }
+    }
+
+
+    class CharChain
+    {
+        private char[] chars;
+        private int index;
+         
+        public CharChain(string text)
+        {
+            chars = text.ToCharArray();
+            index = 0;
+        }
+
+        public Character GetNext()
+        {
+            if(index == chars.Length)
+            {
+                return new Character('\0', index);
+            }
+
+            Character result = new Character(chars[index], index);
+            index++;
+
+            if (isSpace(result.Char))
+            {
+                SkipSpaces();
+            }
+
+            return result;
+        }
+
+        private bool isSpace(char c)
+        {
+            return (c == ' ' || c == '\t' || c == '\r' || c == '\n');
+        }
+
+        public void SkipSpaces()
+        {
+            while (index < chars.Length && isSpace(chars[index]))
+            {
+                index++;
+            }
+        }
+
+        public Character Next()
+        {
+            if (index == chars.Length)
+            {
+                return new Character('\0', index);
+            }
+
+            return new Character(chars[index], index);
+        }
+    }
+}
+
+</listing><hr>
+<h3>Form1.cs</h3><br>
+<listing>
+	String parsedText = null;
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            parsedText = CodeField.Text;
+
+            CharChain chain = new CharChain(CodeField.Text);
+            Parser parser = new Parser();
+
+            ResultField.Text = "";
+
+            int count = 0;
+
+            while (chain.Next().Char != '\0')
+            {
+                parser.Parse(chain);
+
+                var errors = parser.GetErrors();
+
+                foreach(var error in errors)
+                {
+                    count++;
+
+                    ResultField.Text += error.Message + "\r\n";
+
+                    CodeField.Select(error.Idx, 1);
+                    CodeField.SelectionBackColor = Color.Red;
+                    CodeField.DeselectAll();
+                }
+
+            }
+
+            if (count == 0)
+            {
+                ResultField.Text += "Ошибок нет.\r\n";
+            }
+            else
+            {
+                ResultField.Text += "Обнаружено " + count + " ошибок.\r\n";
+            }
+            
+        }
+
+        private void CodeField_Click(object sender, EventArgs e)
+        {
+            if (parsedText != null)
+            {
+                CodeField.Text = "";
+                CodeField.Text = parsedText;
+                parsedText = null;
+            }          
+        }
+</listing>
+
+<footer><small>Курсовая работа выполнена <b>Антонянц Е.</b>, студентом группы АВТ-812</small></footer>
+</body>
+</html>
